@@ -364,7 +364,8 @@ function getMaStatus(ma5,ma20,ma60,prevMa5,prevMa20){
 // 錯誤紀錄
 const errLog=[];
 function logErr(url,status,msg){
-  errLog.unshift({time:new Date().toLocaleTimeString(),url:url.slice(-40),status,msg});
+  const keyHint=apiKey?apiKey.slice(0,8)+'...':'(空)'; 
+  errLog.unshift({time:new Date().toLocaleTimeString(),url:url.slice(-40),status,msg,keyHint});
   if(errLog.length>20)errLog.pop();
   renderErrLog();
 }
@@ -375,12 +376,17 @@ function renderErrLog(){
   el.innerHTML=errLog.map(e=>`<div style="font-size:10px;padding:4px 0;border-bottom:1px solid var(--border);font-family:JetBrains Mono,monospace">
     <span style="color:var(--text2)">${e.time}</span>
     <span style="color:${e.status===200?'var(--green)':e.status===429?'var(--yellow)':'var(--red)'}"> [${e.status}]</span>
-    <span style="color:var(--text2)"> ${e.url}</span>
+    <span style="color:var(--text2)"> ${e.url}</span><span style="color:var(--muted)"> key:${e.keyHint}</span>
     ${e.msg?`<div style="color:var(--red);font-size:9px">${e.msg}</div>`:''}
   </div>`).join('');
 }
 
 async function apiFetch(url){
+  // 每次請求前確認 key 是否存在，若記憶體空則從 localStorage 重新讀取
+  if(!apiKey){
+    const saved=localStorage.getItem('fugle_api_key');
+    if(saved) apiKey=saved;
+  }
   for(let attempt=0;attempt<3;attempt++){
     let res;
     try{ res=await fetch(url,{headers:{'X-API-KEY':apiKey}}); }
