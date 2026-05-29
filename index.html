@@ -159,6 +159,15 @@ td{padding:8px 10px;vertical-align:middle;}
 <div class="tabs">
   <div class="tab active" onclick="showTab('observe',this)">📊 觀察記錄</div>
   <div class="tab" onclick="showTab('guide',this)">📖 操作指南</div>
+  <div class="tab" onclick="toggleDebug()">🔍 錯誤紀錄</div>
+</div>
+
+<div id="debugPanel" style="display:none;background:var(--surface);border-bottom:1px solid var(--border);padding:10px 16px;">
+  <div style="display:flex;align-items:center;gap:10px;margin-bottom:8px;">
+    <span style="font-size:11px;font-weight:700;color:var(--accent)">🔍 API 錯誤紀錄</span>
+    <button onclick="errLog.length=0;renderErrLog();" style="background:transparent;border:1px solid var(--border);border-radius:4px;padding:2px 8px;color:var(--text2);font-size:10px;cursor:pointer;font-family:sans-serif">清除</button>
+  </div>
+  <div id="errLog" style="max-height:200px;overflow-y:auto;"><span style="color:var(--muted);font-size:11px">按「抓取資料」後會顯示每筆請求狀態</span></div>
 </div>
 
 <div id="tab-observe" class="page active">
@@ -352,26 +361,64 @@ function getMaStatus(ma5,ma20,ma60,prevMa5,prevMa20){
   return 'mixed';
 }
 
+// 錯誤紀錄
+const errLog=[];
+function logErr(url,status,msg){
+  errLog.unshift({time:new Date().toLocaleTimeString(),url:url.slice(-40),status,msg});
+  if(errLog.length>20)errLog.pop();
+  renderErrLog();
+}
+function renderErrLog(){
+  const el=document.getElementById('errLog');
+  if(!el)return;
+  if(errLog.length===0){el.innerHTML='<span style="color:var(--muted);font-size:11px">目前無錯誤</span>';return;}
+  el.innerHTML=errLog.map(e=>`<div style="font-size:10px;padding:4px 0;border-bottom:1px solid var(--border);font-family:JetBrains Mono,monospace">
+    <span style="color:var(--text2)">${e.time}</span>
+    <span style="color:${e.status===200?'var(--green)':e.status===429?'var(--yellow)':'var(--red)'}"> [${e.status}]</span>
+    <span style="color:var(--text2)"> ${e.url}</span>
+    ${e.msg?`<div style="color:var(--red);font-size:9px">${e.msg}</div>`:''}
+  </div>`).join('');
+}
+
+async function apiFetch(url){
+  for(let attempt=0;attempt<3;attempt++){
+    let res;
+    try{ res=await fetch(url,{headers:{'X-API-KEY':apiKey}}); }
+    catch(e){ logErr(url,0,e.message); return null; }
+    if(res.status===429){
+      logErr(url,429,'速率限制，等待後重試...');
+      await new Promise(r=>setTimeout(r,2000*(attempt+1)));
+      continue;
+    }
+    if(!res.ok){
+      let errMsg='';
+      try{const j=await res.json();errMsg=j.message||j.error||'';}catch(e){}
+      logErr(url,res.status,errMsg);
+      return null;
+    }
+    logErr(url,200,'');
+    return await res.json();
+  }
+  logErr(url,429,'重試3次仍失敗');
+  return null;
+}
+
 async function fetchStockData(code,queryDate){
-  const h={'X-API-KEY':apiKey};
   const prev=getPrevTradingDay(queryDate);
 
-  // 抓歷史日K（近90天，足夠算MA60）
-  const histDayRes=await fetch(`${BASE}/historical/candles/${code}?fields=open,close,volume&sort=asc`,{headers:h});
-  const histDayData=await histDayRes.json();
+  // 1. 抓歷史日K（算MA + 前日量）
+  const histDayData=await apiFetch(`${BASE}/historical/candles/${code}?fields=open,close,volume&sort=asc`);
   const dayCandlesAll=histDayData?.data||[];
 
-  // 找前一交易日全日量
-  const prevDayCandle=dayCandlesAll.filter(c=>c.date===prev);
-  const prevVol=prevDayCandle.length>0?prevDayCandle[0].volume:0;
+  // 前一交易日全日量
+  const prevDayCandle=dayCandlesAll.find(c=>c.date===prev);
+  const prevVol=prevDayCandle?prevDayCandle.volume:0;
 
-  // 計算MA：用日K收盤價
+  // 計算MA
   const closes=dayCandlesAll.map(c=>c.close);
-  // 找queryDate在日K中的index
   const qIdx=dayCandlesAll.findIndex(c=>c.date===queryDate);
   const closesUpToQ=qIdx>=0?closes.slice(0,qIdx+1):closes;
   const closesUpToPrev=qIdx>=1?closes.slice(0,qIdx):closes.slice(0,-1);
-
   const ma5=calcMA(closesUpToQ,5);
   const ma20=calcMA(closesUpToQ,20);
   const ma60=calcMA(closesUpToQ,60);
@@ -379,11 +426,12 @@ async function fetchStockData(code,queryDate){
   const prevMa20=calcMA(closesUpToPrev,20);
   const maStatus=getMaStatus(ma5,ma20,ma60,prevMa5,prevMa20);
 
-  // 抓5分K
+  // 2. 抓5分K
   let firstVol=0,kDir=null;
+  await new Promise(r=>setTimeout(r,300)); // 兩個請求之間稍微間隔
+
   if(isToday(queryDate)){
-    const intRes=await fetch(`${BASE}/intraday/candles/${code}?timeframe=5`,{headers:h});
-    const intData=await intRes.json();
+    const intData=await apiFetch(`${BASE}/intraday/candles/${code}?timeframe=5`);
     const candles=intData?.data||[];
     if(candles.length>0){
       const first=candles[0];
@@ -391,11 +439,8 @@ async function fetchStockData(code,queryDate){
       kDir=first.close>=first.open?'red':'green';
     }
   } else {
-    // 歷史5分K：回傳近30天，自己篩
-    const res5=await fetch(`${BASE}/historical/candles/${code}?timeframe=5&fields=open,close,volume&sort=asc`,{headers:h});
-    const data5=await res5.json();
+    const data5=await apiFetch(`${BASE}/historical/candles/${code}?timeframe=5&fields=open,close,volume&sort=asc`);
     const candles5=data5?.data||[];
-    // 找queryDate當天最早一根（9:00~9:05）
     const dayCandles=candles5.filter(c=>c.date&&c.date.startsWith(queryDate));
     if(dayCandles.length>0){
       const first=dayCandles[0];
@@ -404,8 +449,7 @@ async function fetchStockData(code,queryDate){
     }
   }
 
-  if(prevVol===0||!kDir)return {ratio:null,kDir:null,sig:null,ma5,ma20,ma60,maStatus};
-
+  if(prevVol===0||!kDir) return {ratio:null,kDir:null,sig:null,ma5,ma20,ma60,maStatus};
   const ratio=(firstVol/prevVol)*100;
   const sig=ratio>=15?(kDir==='red'?'green':'red'):'warn';
   return {ratio,kDir,sig,ma5,ma20,ma60,maStatus};
@@ -419,29 +463,33 @@ async function startFetch(){
   document.getElementById('progBar').style.opacity='1';
   const prog=document.getElementById('progInner');
   let done=0; const total=STOCKS.length;
-  for(let i=0;i<total;i+=3){
-    const batch=STOCKS.slice(i,i+3);
-    await Promise.all(batch.map(async([r,code])=>{
-      ensureStock(code);
-      try{
-        const res=await fetchStockData(code,queryDate);
-        if(res){
-          stockData[code].ratio=res.ratio;
-          stockData[code].kDir=res.kDir;
-          stockData[code].sig=res.sig;
-          stockData[code].ma5=res.ma5;
-          stockData[code].ma20=res.ma20;
-          stockData[code].ma60=res.ma60;
-          stockData[code].maStatus=res.maStatus;
-        }
-      }catch(e){}
-      done++; prog.style.width=(done/total*100)+'%';
-    }));
-    await new Promise(r=>setTimeout(r,400));
-    renderTable(); updateStats();
+
+  // 一次抓一支，避免觸發 rate limit
+  for(let i=0;i<total;i++){
+    const [r,code]=STOCKS[i];
+    ensureStock(code);
+    try{
+      const res=await fetchStockData(code,queryDate);
+      if(res){
+        stockData[code].ratio=res.ratio;
+        stockData[code].kDir=res.kDir;
+        stockData[code].sig=res.sig;
+        stockData[code].ma5=res.ma5;
+        stockData[code].ma20=res.ma20;
+        stockData[code].ma60=res.ma60;
+        stockData[code].maStatus=res.maStatus;
+      }
+    }catch(e){}
+    done++;
+    prog.style.width=(done/total*100)+'%';
+    document.getElementById('sFetched').textContent=done;
+    if(done%10===0){renderTable();updateStats();}
+    // 每支股票之間間隔 800ms，確保不超過速率限制
+    await new Promise(r=>setTimeout(r,800));
   }
   saveState(); fetching=false;
   btn.disabled=false; btn.textContent='🔄 重新抓取';
+  renderTable(); updateStats();
   setTimeout(()=>{document.getElementById('progBar').style.opacity='0';},1000);
   showToast('✅ 抓取完成！');
 }
@@ -544,6 +592,7 @@ function updateStats(){
 function toggleTrap(code,val){ensureStock(code);stockData[code].trap=stockData[code].trap===val?null:val;saveState();renderTable();updateStats();}
 function setNote(code,val){ensureStock(code);stockData[code].note=val;saveState();}
 function toggleWatch(code){ensureStock(code);stockData[code].watch=!stockData[code].watch;saveState();renderTable();updateStats();}
+function toggleDebug(){const p=document.getElementById("debugPanel");p.style.display=p.style.display==="none"?"block":"none";}
 function showTab(name,el){document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));document.getElementById('tab-'+name).classList.add('active');el.classList.add('active');}
 function saveApiKey(){const k=document.getElementById('apiKeyInput').value.trim();if(!k){showToast('請輸入 API Key');return;}apiKey=k;localStorage.setItem('fugle_api_key',k);document.getElementById('setupScreen').style.display='none';document.getElementById('mainApp').style.display='block';initApp();}
 function showSettings(){const k=prompt('更換 API Key（留空取消）：');if(k&&k.trim()){apiKey=k.trim();localStorage.setItem('fugle_api_key',apiKey);showToast('✅ API Key 已更新');}}
