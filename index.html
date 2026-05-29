@@ -6,11 +6,7 @@
 <title>台股500大｜9:05即時觀察</title>
 <style>
 @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@300;400;500;700;900&family=JetBrains+Mono:wght@400;700&display=swap');
-:root {
-  --bg:#07090f;--surface:#0f1117;--surface2:#161b25;--border:#1c2234;
-  --red:#ff3b4e;--green:#00e676;--yellow:#ffc107;--blue:#448aff;
-  --text:#dde3f0;--text2:#6b7a99;--muted:#2d3548;--accent:#ff6b35;
-}
+:root{--bg:#07090f;--surface:#0f1117;--surface2:#161b25;--border:#1c2234;--red:#ff3b4e;--green:#00e676;--yellow:#ffc107;--blue:#448aff;--purple:#a78bfa;--text:#dde3f0;--text2:#6b7a99;--muted:#2d3548;--accent:#ff6b35;}
 *{box-sizing:border-box;margin:0;padding:0;}
 body{background:var(--bg);color:var(--text);font-family:'Noto Sans TC',sans-serif;min-height:100vh;}
 .header{background:var(--surface);border-bottom:1px solid var(--border);padding:12px 16px;display:flex;align-items:center;gap:10px;position:sticky;top:0;z-index:100;flex-wrap:wrap;}
@@ -22,8 +18,6 @@ body{background:var(--bg);color:var(--text);font-family:'Noto Sans TC',sans-seri
 .hbtn.primary{background:var(--accent);border-color:var(--accent);color:#fff;font-weight:700;}
 .hbtn.primary:hover{opacity:.85;}
 .hbtn:disabled{opacity:.4;cursor:not-allowed;}
-
-/* DATE BAR */
 .date-bar{background:var(--surface);border-bottom:1px solid var(--border);padding:10px 16px;display:flex;align-items:center;gap:10px;flex-wrap:wrap;}
 .date-bar label{font-size:12px;color:var(--text2);white-space:nowrap;}
 .date-input{background:var(--surface2);border:1px solid var(--border);border-radius:6px;padding:7px 12px;color:var(--text);font-family:'JetBrains Mono',monospace;font-size:13px;outline:none;transition:border-color .2s;}
@@ -31,24 +25,20 @@ body{background:var(--bg);color:var(--text);font-family:'Noto Sans TC',sans-seri
 .mode-badge{padding:4px 10px;border-radius:20px;font-size:11px;font-weight:700;}
 .mode-live{background:rgba(0,230,118,.15);color:var(--green);border:1px solid rgba(0,230,118,.3);}
 .mode-hist{background:rgba(68,138,255,.15);color:var(--blue);border:1px solid rgba(68,138,255,.3);}
-
 .setup-screen{max-width:480px;margin:60px auto;padding:32px;background:var(--surface);border:1px solid var(--border);border-radius:12px;text-align:center;}
 .setup-screen h2{font-size:18px;margin-bottom:8px;}
 .setup-screen p{font-size:13px;color:var(--text2);margin-bottom:24px;line-height:1.7;}
 .api-input{width:100%;background:var(--surface2);border:1px solid var(--border);border-radius:8px;padding:12px 14px;color:var(--text);font-family:'JetBrains Mono',monospace;font-size:12px;outline:none;transition:border-color .2s;margin-bottom:12px;}
 .api-input:focus{border-color:var(--accent);}
 .setup-note{font-size:11px;color:var(--text2);margin-top:12px;line-height:1.6;}
-
 .stats-bar{display:grid;grid-template-columns:repeat(5,1fr);gap:8px;padding:12px 16px;background:var(--surface);border-bottom:1px solid var(--border);}
 .stat{text-align:center;padding:8px 4px;}
 .stat-num{font-family:'JetBrains Mono',monospace;font-size:20px;font-weight:700;line-height:1;}
 .stat-label{font-size:10px;color:var(--text2);margin-top:3px;}
 .red{color:var(--red);}.green{color:var(--green);}.yellow{color:var(--yellow);}
-
 .tabs{display:flex;background:var(--surface);border-bottom:1px solid var(--border);}
 .tab{padding:10px 16px;font-size:12px;color:var(--text2);cursor:pointer;border-bottom:2px solid transparent;transition:all .2s;white-space:nowrap;}
 .tab.active{color:var(--accent);border-bottom-color:var(--accent);}
-
 .controls{padding:10px 16px;display:flex;gap:8px;flex-wrap:wrap;align-items:center;border-bottom:1px solid var(--border);}
 .search{flex:1;min-width:150px;background:var(--surface);border:1px solid var(--border);border-radius:6px;padding:8px 12px;color:var(--text);font-family:'Noto Sans TC',sans-serif;font-size:13px;outline:none;}
 .search:focus{border-color:var(--accent);}
@@ -57,7 +47,7 @@ body{background:var(--bg);color:var(--text);font-family:'Noto Sans TC',sans-seri
 .fbtn.active{border-color:var(--accent);color:var(--accent);}
 .fbtn.fr.active{border-color:var(--red);color:var(--red);}
 .fbtn.fg.active{border-color:var(--green);color:var(--green);}
-
+.fbtn.fgc.active{border-color:#ffd700;color:#ffd700;}
 .table-wrap{overflow-x:auto;}
 table{width:100%;border-collapse:collapse;font-size:12px;}
 thead tr{background:var(--surface2);}
@@ -80,32 +70,41 @@ td{padding:8px 10px;vertical-align:middle;}
 .ab-sell{background:rgba(255,59,78,.12);color:#ff3b4e;border:1px solid rgba(255,59,78,.25);}
 .ab-wait{background:rgba(68,138,255,.12);color:#448aff;border:1px solid rgba(68,138,255,.25);}
 .ab-exit{background:rgba(255,193,7,.12);color:#ffc107;border:1px solid rgba(255,193,7,.25);}
+.ab-star{background:rgba(255,215,0,.15);color:#ffd700;border:1px solid rgba(255,215,0,.3);}
+
+/* MA BADGES */
+.ma-wrap{display:flex;flex-direction:column;gap:3px;}
+.ma-badge{display:inline-block;padding:2px 6px;border-radius:3px;font-size:9px;font-weight:700;white-space:nowrap;}
+.ma-bull{background:rgba(0,230,118,.12);color:#00e676;border:1px solid rgba(0,230,118,.2);}
+.ma-bear{background:rgba(255,59,78,.12);color:#ff3b4e;border:1px solid rgba(255,59,78,.2);}
+.ma-mixed{background:rgba(255,193,7,.1);color:#ffc107;border:1px solid rgba(255,193,7,.2);}
+.ma-gc{background:rgba(255,215,0,.15);color:#ffd700;border:1px solid rgba(255,215,0,.3);}
+.ma-dc{background:rgba(167,139,250,.12);color:#a78bfa;border:1px solid rgba(167,139,250,.25);}
+.ma-loading{color:var(--muted);font-size:9px;}
 
 .action-panel{padding:12px 16px;background:var(--surface);border-bottom:1px solid var(--border);}
 .action-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:10px;}
 .acard{background:var(--surface2);border-radius:8px;padding:12px 14px;border-left:3px solid;}
 .acard.buy{border-color:var(--green);}.acard.sell{border-color:var(--red);}
 .acard.wait{border-color:var(--blue);}.acard.exit{border-color:var(--yellow);}
+.acard.star{border-color:#ffd700;}
 .acard-title{font-size:12px;font-weight:700;margin-bottom:6px;}
 .acard-body{font-size:11px;color:var(--text2);line-height:1.8;}
 .acard-body b{color:var(--text);}
-
 .trap-group{display:flex;gap:4px;}
 .tbtn{padding:3px 6px;border-radius:4px;border:1px solid var(--border);background:transparent;color:var(--muted);font-size:10px;cursor:pointer;transition:all .15s;white-space:nowrap;}
 .tbtn.ar{background:rgba(255,59,78,.15);border-color:var(--red);color:var(--red);}
 .tbtn.ag{background:rgba(0,230,118,.15);border-color:var(--green);color:var(--green);}
-.note-input{background:transparent;border:1px solid transparent;border-radius:4px;padding:3px 7px;color:var(--text);font-family:'Noto Sans TC',sans-serif;font-size:11px;width:110px;outline:none;transition:all .2s;}
+.note-input{background:transparent;border:1px solid transparent;border-radius:4px;padding:3px 7px;color:var(--text);font-family:'Noto Sans TC',sans-serif;font-size:11px;width:100px;outline:none;transition:all .2s;}
 .note-input:focus{border-color:var(--border);background:var(--surface2);}
 .note-input::placeholder{color:var(--muted);}
 .star{background:transparent;border:none;cursor:pointer;font-size:14px;color:var(--muted);transition:color .15s;}
 .star.on{color:var(--yellow);}
-
 .prog-bar{height:2px;background:var(--border);position:fixed;top:0;left:0;right:0;z-index:200;transition:opacity .3s;}
 .prog-inner{height:100%;background:var(--accent);transition:width .3s;width:0;}
 .toast{position:fixed;bottom:20px;right:16px;background:var(--surface2);border:1px solid var(--accent);border-radius:8px;padding:10px 16px;font-size:12px;z-index:999;opacity:0;transform:translateY(8px);transition:all .25s;pointer-events:none;}
 .toast.show{opacity:1;transform:translateY(0);}
 .page{display:none;}.page.active{display:block;}
-
 .guide{padding:16px;max-width:700px;}
 .guide h3{font-size:14px;margin:20px 0 10px;color:var(--accent);}
 .guide h3:first-child{margin-top:0;}
@@ -115,12 +114,7 @@ td{padding:8px 10px;vertical-align:middle;}
 .guide .step-title{font-size:13px;font-weight:700;margin-bottom:8px;}
 .guide .cond{display:flex;gap:10px;align-items:flex-start;margin-bottom:8px;font-size:12px;color:var(--text2);line-height:1.7;}
 .guide .cond-icon{font-size:16px;flex-shrink:0;margin-top:1px;}
-
-@media(max-width:640px){
-  .stats-bar{grid-template-columns:repeat(3,1fr);}
-  .action-grid{grid-template-columns:1fr;}
-  th:nth-child(4),td:nth-child(4){display:none;}
-}
+@media(max-width:640px){.stats-bar{grid-template-columns:repeat(3,1fr);}.action-grid{grid-template-columns:1fr;}th:nth-child(4),td:nth-child(4){display:none;}}
 </style>
 </head>
 <body>
@@ -129,14 +123,13 @@ td{padding:8px 10px;vertical-align:middle;}
 <div class="setup-screen" id="setupScreen">
   <div style="font-size:32px;margin-bottom:12px">📈</div>
   <h2>台股500大｜9:05觀察系統</h2>
-  <p>輸入你的富果 API Key，工具會自動計算量比與K棒方向，並給出操作建議。</p>
+  <p>輸入你的富果 API Key，工具會自動計算量比、K棒方向、均線趨勢，並給出操作建議。</p>
   <input class="api-input" id="apiKeyInput" type="password" placeholder="貼上你的富果 API Key…">
   <button class="hbtn primary" style="width:100%;padding:12px" onclick="saveApiKey()">開始使用</button>
   <p class="setup-note">⚠️ API Key 僅儲存在你的瀏覽器本地，不會上傳至任何伺服器。</p>
 </div>
 
 <div id="mainApp" style="display:none">
-
 <div class="header">
   <div>
     <div class="logo">TSE-500 · 9:05</div>
@@ -148,7 +141,6 @@ td{padding:8px 10px;vertical-align:middle;}
   <button class="hbtn" onclick="showSettings()">⚙️</button>
 </div>
 
-<!-- 日期選擇列 -->
 <div class="date-bar">
   <label>查詢日期：</label>
   <input type="date" class="date-input" id="queryDate" onchange="onDateChange()">
@@ -159,9 +151,9 @@ td{padding:8px 10px;vertical-align:middle;}
 <div class="stats-bar">
   <div class="stat"><div class="stat-num red" id="sRed">0</div><div class="stat-label">🔴 倒貨警報</div></div>
   <div class="stat"><div class="stat-num green" id="sGreen">0</div><div class="stat-label">🟢 有呼吸</div></div>
-  <div class="stat"><div class="stat-num yellow" id="sWarn">0</div><div class="stat-label">⚠️ 量不足</div></div>
+  <div class="stat"><div class="stat-num" style="color:#ffd700" id="sGC">0</div><div class="stat-label">🌟 黃金交叉</div></div>
   <div class="stat"><div class="stat-num" style="color:var(--blue)" id="sFetched">0</div><div class="stat-label">已抓取</div></div>
-  <div class="stat"><div class="stat-num" style="color:#a78bfa" id="sWatch">0</div><div class="stat-label">⭐ 關注</div></div>
+  <div class="stat"><div class="stat-num" style="color:var(--purple)" id="sWatch">0</div><div class="stat-label">⭐ 關注</div></div>
 </div>
 
 <div class="tabs">
@@ -171,23 +163,23 @@ td{padding:8px 10px;vertical-align:middle;}
 
 <div id="tab-observe" class="page active">
   <div class="action-panel">
-    <div style="font-size:11px;color:var(--text2);margin-bottom:10px;font-weight:500;">📋 今日操作建議（依量比訊號自動判斷）</div>
+    <div style="font-size:11px;color:var(--text2);margin-bottom:10px;font-weight:500;">📋 操作建議（依訊號自動判斷）</div>
     <div class="action-grid">
+      <div class="acard star">
+        <div class="acard-title" style="color:#ffd700">🌟 最強訊號（三合一）</div>
+        <div class="acard-body">量比 &gt;15% + 紅K + 黃金交叉 + 多頭排列<br><b>這是最高優先級的進場機會</b><br>三個條件同時成立，勝率最高</div>
+      </div>
       <div class="acard buy">
         <div class="acard-title" style="color:var(--green)">🟢 有呼吸 → 可考慮追進</div>
-        <div class="acard-body">量比 &gt;15% + 紅K，確認<b>真實買盤</b>在搶。<br><b>進場：</b>量比達標即可留意<br><b>停損：</b>跌破開盤價就出，不戀戰<br><b>停利：</b>前高或 3~5% 先減半</div>
+        <div class="acard-body">量比 &gt;15% + 紅K<br><b>進場：</b>量比達標即可留意<br><b>停損：</b>跌破開盤價就出<br><b>停利：</b>前高或 3~5% 先減半</div>
       </div>
       <div class="acard sell">
         <div class="acard-title" style="color:var(--red)">🔴 倒貨警報 → 第一聲警報</div>
-        <div class="acard-body">量比 &gt;15% + 綠K，有人在<b>高位出貨</b>。<br><b>手上有單：</b>立即評估，考慮減碼<br><b>準備做空：</b>等 9:30 確認跌破開盤價<br><b>切勿：</b>量大綠K逢低買</div>
-      </div>
-      <div class="acard wait">
-        <div class="acard-title" style="color:var(--blue)">⚠️ 量不足 → 觀望不動</div>
-        <div class="acard-body">量比 &lt;15%，多空未表態，<b>不要躁進</b>。<br><b>操作：</b>等待量能放大再做決定<br><b>注意：</b>若 9:30 前量比突然衝上 15%，需重新判斷 K 棒方向</div>
+        <div class="acard-body">量比 &gt;15% + 綠K<br><b>手上有單：</b>立即評估減碼<br><b>做空：</b>等 9:30 確認跌破開盤價<br><b>切勿：</b>量大綠K逢低買</div>
       </div>
       <div class="acard exit">
-        <div class="acard-title" style="color:var(--yellow)">🪤 9:30 陷阱線 → 關鍵決策點</div>
-        <div class="acard-body"><b>假突破（開高跌破開盤價）：</b><br>→ 有單立即處理，策略離場<br><b>洗盤完（開低站回開盤價）：</b><br>→ 大人進場，可考慮跟進做多</div>
+        <div class="acard-title" style="color:var(--yellow)">🪤 9:30 陷阱線 → 關鍵決策</div>
+        <div class="acard-body"><b>假突破：</b>開高跌破開盤價 → 策略離場<br><b>洗盤完：</b>開低站回開盤價 → 大人進場，可跟多</div>
       </div>
     </div>
   </div>
@@ -197,7 +189,8 @@ td{padding:8px 10px;vertical-align:middle;}
     <button class="fbtn active" id="f-all" onclick="setFilter('all')">全部</button>
     <button class="fbtn fg" id="f-green" onclick="setFilter('green')">🟢 有呼吸</button>
     <button class="fbtn fr" id="f-red" onclick="setFilter('red')">🔴 倒貨</button>
-    <button class="fbtn" id="f-warn" onclick="setFilter('warn')">⚠️ 量不足</button>
+    <button class="fbtn fgc" id="f-gc" onclick="setFilter('gc')">🌟 黃金交叉</button>
+    <button class="fbtn" id="f-bull" onclick="setFilter('bull')">📈 多頭</button>
     <button class="fbtn" id="f-watch" onclick="setFilter('watch')">⭐</button>
     <span id="countLabel" style="font-size:11px;color:var(--text2);margin-left:auto">--</span>
   </div>
@@ -206,7 +199,9 @@ td{padding:8px 10px;vertical-align:middle;}
   <table>
     <thead><tr>
       <th>#</th><th>代號</th><th>名稱</th><th>比重</th>
-      <th>量比</th><th>K向</th><th>訊號</th><th>操作建議</th>
+      <th>量比</th><th>K向</th><th>訊號</th>
+      <th>均線趨勢</th>
+      <th>操作建議</th>
       <th>9:30陷阱</th><th>備注</th><th>⭐</th>
     </tr></thead>
     <tbody id="tbody"></tbody>
@@ -219,12 +214,12 @@ td{padding:8px 10px;vertical-align:middle;}
   <h3>📊 9:05 量比訊號</h3>
   <div class="step">
     <div class="step-title">計算方式</div>
-    <p>查詢日期當天第一根 5 分鐘 K 棒成交量 ÷ 前一交易日全日成交量 × 100%</p>
-    <p><b>為什麼是 15%？</b>能走出波段的股票，開盤第一根量幾乎不會低於 12%，超過 15% 代表多空開盤就先打了一輪。</p>
+    <p>當天第一根 5 分鐘 K 棒成交量 ÷ 前一交易日全日成交量 × 100%</p>
+    <p><b>為什麼是 15%？</b>能走出波段的股票，開盤第一根量幾乎不低於 12%，超過 15% 代表多空開盤就先決出勝負。</p>
   </div>
   <div class="step">
     <div class="step-title">🟢 有呼吸（量比 &gt;15% + 紅K）</div>
-    <div class="cond"><div class="cond-icon">📌</div><div><b>進場：</b>確認量比達標，開盤價附近追進</div></div>
+    <div class="cond"><div class="cond-icon">📌</div><div><b>進場：</b>量比達標，開盤價附近追進</div></div>
     <div class="cond"><div class="cond-icon">🛑</div><div><b>停損：</b>跌破開盤價立即出</div></div>
     <div class="cond"><div class="cond-icon">🎯</div><div><b>停利：</b>前高或 3~5% 先減半，剩餘讓利潤奔跑</div></div>
   </div>
@@ -234,30 +229,33 @@ td{padding:8px 10px;vertical-align:middle;}
     <div class="cond"><div class="cond-icon">📌</div><div><b>手上有單：</b>第一聲警報，立即評估是否減碼</div></div>
     <div class="cond"><div class="cond-icon">📌</div><div><b>做空：</b>等 9:30 確認跌破開盤價後行動</div></div>
   </div>
+  <h3>📈 均線趨勢（MA5 / MA20 / MA60）</h3>
   <div class="step">
-    <div class="step-title">⚠️ 量不足（量比 &lt;15%）</div>
-    <div class="cond"><div class="cond-icon">👁</div><div>多空未表態，保持觀望，等量能放大</div></div>
+    <div class="step-title">用途：確認中長線方向，避免逆勢操作</div>
+    <div class="cond"><div class="cond-icon">🟢</div><div><b>多頭排列：</b>MA5 &gt; MA20 &gt; MA60，趨勢向上，做多訊號更可靠</div></div>
+    <div class="cond"><div class="cond-icon">🔴</div><div><b>空頭排列：</b>MA5 &lt; MA20 &lt; MA60，趨勢向下，即使量比有呼吸也要小心，可能只是反彈</div></div>
+    <div class="cond"><div class="cond-icon">🌟</div><div><b>黃金交叉：</b>MA5 剛上穿 MA20，趨勢轉多訊號，配合量比有呼吸是最強組合</div></div>
+    <div class="cond"><div class="cond-icon">💀</div><div><b>死亡交叉：</b>MA5 剛下穿 MA20，趨勢轉空，要特別謹慎</div></div>
+  </div>
+  <div class="step">
+    <div class="step-title">🌟 最強訊號（三合一）</div>
+    <p>量比 &gt;15% + 紅K（有呼吸）+ 黃金交叉 + 多頭排列 → 四個條件同時成立，這是最高優先級的進場機會，勝率最高。</p>
   </div>
   <h3>🪤 9:30 陷阱線</h3>
   <div class="step">
-    <div class="cond"><div class="cond-icon">🔴</div><div><b>假突破：</b>開高後 9:30 跌回開盤價下方 → 策略離場，讓幻想的人幫你墊流動性</div></div>
+    <div class="cond"><div class="cond-icon">🔴</div><div><b>假突破：</b>開高後 9:30 跌回開盤價下方 → 策略離場</div></div>
     <div class="cond"><div class="cond-icon">🟢</div><div><b>洗盤完：</b>開低後 9:30 站回開盤價 → 大人進場，可跟進做多</div></div>
     <div class="cond"><div class="cond-icon">⏰</div><div><b>截止：</b>過了 9:30 還不回開盤價，開始有策略地出場</div></div>
   </div>
   <h3>📋 每日四步驟</h3>
   <div class="step">
     <div class="cond"><div class="cond-icon">1️⃣</div><div><b>9:05</b> 打開工具，選今天日期，按「抓取資料」</div></div>
-    <div class="cond"><div class="cond-icon">2️⃣</div><div><b>9:05~9:30</b> 篩出「有呼吸」個股，打⭐加入關注</div></div>
-    <div class="cond"><div class="cond-icon">3️⃣</div><div><b>9:30</b> 觀察每支股票是否站上或跌破開盤價，記錄陷阱線結果</div></div>
-    <div class="cond"><div class="cond-icon">4️⃣</div><div><b>9:30後</b> 依結果執行進出場</div></div>
-  </div>
-  <h3>🗓 回顧歷史</h3>
-  <div class="step">
-    <p>在上方「查詢日期」選擇過去的交易日，按「抓取資料」即可查看當天開盤的量比訊號，方便回頭驗證邏輯。</p>
+    <div class="cond"><div class="cond-icon">2️⃣</div><div><b>9:05~9:30</b> 先看「🌟 黃金交叉」篩選，再看「🟢 有呼吸」，打⭐加入關注</div></div>
+    <div class="cond"><div class="cond-icon">3️⃣</div><div><b>9:30</b> 確認每支關注股票是否站上或跌破開盤價，記錄陷阱線結果</div></div>
+    <div class="cond"><div class="cond-icon">4️⃣</div><div><b>9:30後</b> 依訊號組合執行進出場，三合一訊號優先</div></div>
   </div>
 </div>
 </div>
-
 </div>
 <div class="toast" id="toast"></div>
 
@@ -319,73 +317,98 @@ let apiKey='',stockData={},currentFilter='all',fetching=false;
 const BASE='https://api.fugle.tw/marketdata/v1.0/stock';
 
 function todayStr(){return new Date().toISOString().slice(0,10);}
-function storeKey(d){return 'tse500_v3_'+(d||getQueryDate());}
+function storeKey(d){return 'tse500_v4_'+(d||getQueryDate());}
 function saveState(){localStorage.setItem(storeKey(),JSON.stringify(stockData));}
 function loadState(d){const r=localStorage.getItem(storeKey(d));stockData=r?JSON.parse(r):{};}
-function ensureStock(c){if(!stockData[c])stockData[c]={ratio:null,kDir:null,sig:null,trap:null,note:'',watch:false};}
+function ensureStock(c){if(!stockData[c])stockData[c]={ratio:null,kDir:null,sig:null,ma5:null,ma20:null,ma60:null,maStatus:null,trap:null,note:'',watch:false};}
 function getQueryDate(){return document.getElementById('queryDate').value||todayStr();}
+function isToday(d){return d===todayStr();}
 
 function getPrevTradingDay(fromDate){
   const d=new Date(fromDate+'T12:00:00');
   d.setDate(d.getDate()-1);
-  while(d.getDay()===0||d.getDay()===6) d.setDate(d.getDate()-1);
+  while(d.getDay()===0||d.getDay()===6)d.setDate(d.getDate()-1);
   return d.toISOString().slice(0,10);
 }
 
-function isToday(d){return d===todayStr();}
-
-function onDateChange(){
-  const d=getQueryDate();
-  const today=todayStr();
-  const badge=document.getElementById('modeBadge');
-  const hint=document.getElementById('dateHint');
-  if(d===today){
-    badge.className='mode-badge mode-live'; badge.textContent='今日即時';
-    hint.textContent='抓取盤中第一根5分K';
-  } else {
-    badge.className='mode-badge mode-hist'; badge.textContent='歷史回顧';
-    hint.textContent='抓取該日歷史K線資料';
-  }
-  loadState(d); renderTable(); updateStats();
+function calcMA(closes,n){
+  if(closes.length<n)return null;
+  const s=closes.slice(-n);
+  return s.reduce((a,b)=>a+b,0)/n;
 }
 
-async function fetchStockData(code, queryDate){
+function getMaStatus(ma5,ma20,ma60,prevMa5,prevMa20){
+  if(!ma5||!ma20)return null;
+  // 黃金交叉：今天ma5>ma20 且昨天ma5<=ma20
+  const isGC=ma5>ma20&&prevMa5!==null&&prevMa5<=prevMa20;
+  // 死亡交叉：今天ma5<ma20 且昨天ma5>=ma20
+  const isDC=ma5<ma20&&prevMa5!==null&&prevMa5>=prevMa20;
+  if(isGC)return 'gc';
+  if(isDC)return 'dc';
+  if(ma60&&ma5>ma20&&ma20>ma60)return 'bull';
+  if(ma60&&ma5<ma20&&ma20<ma60)return 'bear';
+  if(ma5>ma20)return 'bull_partial';
+  if(ma5<ma20)return 'bear_partial';
+  return 'mixed';
+}
+
+async function fetchStockData(code,queryDate){
   const h={'X-API-KEY':apiKey};
   const prev=getPrevTradingDay(queryDate);
+
+  // 抓歷史日K（近90天，足夠算MA60）
+  const histDayRes=await fetch(`${BASE}/historical/candles/${code}?fields=open,close,volume&sort=asc`,{headers:h});
+  const histDayData=await histDayRes.json();
+  const dayCandlesAll=histDayData?.data||[];
+
+  // 找前一交易日全日量
+  const prevDayCandle=dayCandlesAll.filter(c=>c.date===prev);
+  const prevVol=prevDayCandle.length>0?prevDayCandle[0].volume:0;
+
+  // 計算MA：用日K收盤價
+  const closes=dayCandlesAll.map(c=>c.close);
+  // 找queryDate在日K中的index
+  const qIdx=dayCandlesAll.findIndex(c=>c.date===queryDate);
+  const closesUpToQ=qIdx>=0?closes.slice(0,qIdx+1):closes;
+  const closesUpToPrev=qIdx>=1?closes.slice(0,qIdx):closes.slice(0,-1);
+
+  const ma5=calcMA(closesUpToQ,5);
+  const ma20=calcMA(closesUpToQ,20);
+  const ma60=calcMA(closesUpToQ,60);
+  const prevMa5=calcMA(closesUpToPrev,5);
+  const prevMa20=calcMA(closesUpToPrev,20);
+  const maStatus=getMaStatus(ma5,ma20,ma60,prevMa5,prevMa20);
+
+  // 抓5分K
+  let firstVol=0,kDir=null;
   if(isToday(queryDate)){
-    // 盤中：用 intraday candles
-    const [ir,hr]=await Promise.all([
-      fetch(`${BASE}/intraday/candles/${code}?timeframe=5`,{headers:h}),
-      fetch(`${BASE}/historical/candles/${code}?from=${prev}&to=${prev}&fields=open,close,volume`,{headers:h})
-    ]);
-    const id=await ir.json(),hd=await hr.json();
-    const candles=id?.data; if(!candles||candles.length===0) return null;
-    const first=candles[0];
-    const firstVol=first.volume||0;
-    const kDir=first.close>=first.open?'red':'green';
-    const hc=hd?.data; if(!hc||hc.length===0) return null;
-    const prevVol=hc[0].volume||0; if(prevVol===0) return null;
-    const ratio=(firstVol/prevVol)*100;
-    const sig=ratio>=15?(kDir==='red'?'green':'red'):'warn';
-    return {ratio,kDir,sig};
+    const intRes=await fetch(`${BASE}/intraday/candles/${code}?timeframe=5`,{headers:h});
+    const intData=await intRes.json();
+    const candles=intData?.data||[];
+    if(candles.length>0){
+      const first=candles[0];
+      firstVol=first.volume||0;
+      kDir=first.close>=first.open?'red':'green';
+    }
   } else {
-    // 歷史：用 historical candles 抓當天5分K
-    const [dayRes,prevRes]=await Promise.all([
-      fetch(`${BASE}/historical/candles/${code}?from=${queryDate}&to=${queryDate}&timeframe=5&fields=open,close,volume`,{headers:h}),
-      fetch(`${BASE}/historical/candles/${code}?from=${prev}&to=${prev}&fields=open,close,volume`,{headers:h})
-    ]);
-    const dayData=await dayRes.json(),prevData=await prevRes.json();
-    const candles=dayData?.data; if(!candles||candles.length===0) return null;
-    // 找最早的一根（9:00~9:05）
-    const first=candles[0];
-    const firstVol=first.volume||0;
-    const kDir=first.close>=first.open?'red':'green';
-    const hc=prevData?.data; if(!hc||hc.length===0) return null;
-    const prevVol=hc[0].volume||0; if(prevVol===0) return null;
-    const ratio=(firstVol/prevVol)*100;
-    const sig=ratio>=15?(kDir==='red'?'green':'red'):'warn';
-    return {ratio,kDir,sig};
+    // 歷史5分K：回傳近30天，自己篩
+    const res5=await fetch(`${BASE}/historical/candles/${code}?timeframe=5&fields=open,close,volume&sort=asc`,{headers:h});
+    const data5=await res5.json();
+    const candles5=data5?.data||[];
+    // 找queryDate當天最早一根（9:00~9:05）
+    const dayCandles=candles5.filter(c=>c.date&&c.date.startsWith(queryDate));
+    if(dayCandles.length>0){
+      const first=dayCandles[0];
+      firstVol=first.volume||0;
+      kDir=first.close>=first.open?'red':'green';
+    }
   }
+
+  if(prevVol===0||!kDir)return {ratio:null,kDir:null,sig:null,ma5,ma20,ma60,maStatus};
+
+  const ratio=(firstVol/prevVol)*100;
+  const sig=ratio>=15?(kDir==='red'?'green':'red'):'warn';
+  return {ratio,kDir,sig,ma5,ma20,ma60,maStatus};
 }
 
 async function startFetch(){
@@ -396,14 +419,25 @@ async function startFetch(){
   document.getElementById('progBar').style.opacity='1';
   const prog=document.getElementById('progInner');
   let done=0; const total=STOCKS.length;
-  for(let i=0;i<total;i+=5){
-    const batch=STOCKS.slice(i,i+5);
+  for(let i=0;i<total;i+=3){
+    const batch=STOCKS.slice(i,i+3);
     await Promise.all(batch.map(async([r,code])=>{
       ensureStock(code);
-      try{const res=await fetchStockData(code,queryDate);if(res){stockData[code].ratio=res.ratio;stockData[code].kDir=res.kDir;stockData[code].sig=res.sig;}}catch(e){}
+      try{
+        const res=await fetchStockData(code,queryDate);
+        if(res){
+          stockData[code].ratio=res.ratio;
+          stockData[code].kDir=res.kDir;
+          stockData[code].sig=res.sig;
+          stockData[code].ma5=res.ma5;
+          stockData[code].ma20=res.ma20;
+          stockData[code].ma60=res.ma60;
+          stockData[code].maStatus=res.maStatus;
+        }
+      }catch(e){}
       done++; prog.style.width=(done/total*100)+'%';
     }));
-    await new Promise(r=>setTimeout(r,300));
+    await new Promise(r=>setTimeout(r,400));
     renderTable(); updateStats();
   }
   saveState(); fetching=false;
@@ -412,17 +446,53 @@ async function startFetch(){
   showToast('✅ 抓取完成！');
 }
 
+function getMaHTML(d){
+  if(!d||d.maStatus===null) return '<span class="ma-loading">—</span>';
+  const ma5s=d.ma5?d.ma5.toFixed(1):'—';
+  const ma20s=d.ma20?d.ma20.toFixed(1):'—';
+  const ma60s=d.ma60?d.ma60.toFixed(1):'—';
+  let statusBadge='';
+  if(d.maStatus==='gc') statusBadge='<span class="ma-badge ma-gc">🌟黃金交叉</span>';
+  else if(d.maStatus==='dc') statusBadge='<span class="ma-badge ma-dc">💀死亡交叉</span>';
+  else if(d.maStatus==='bull') statusBadge='<span class="ma-badge ma-bull">📈多頭排列</span>';
+  else if(d.maStatus==='bear') statusBadge='<span class="ma-badge ma-bear">📉空頭排列</span>';
+  else if(d.maStatus==='bull_partial') statusBadge='<span class="ma-badge ma-bull">↗偏多</span>';
+  else if(d.maStatus==='bear_partial') statusBadge='<span class="ma-badge ma-bear">↘偏空</span>';
+  else statusBadge='<span class="ma-badge ma-mixed">橫盤</span>';
+  return `<div class="ma-wrap">${statusBadge}<span style="font-size:9px;color:var(--text2);font-family:'JetBrains Mono',monospace">5:${ma5s} 20:${ma20s} 60:${ma60s}</span></div>`;
+}
+
 function getActionHTML(d){
   if(!d||d.sig===null) return '<span style="color:var(--muted);font-size:10px">—</span>';
+  // 三合一最強訊號
+  if(d.sig==='green'&&(d.maStatus==='gc'||d.maStatus==='bull'))
+    return '<span class="action-badge ab-star">🌟最強訊號</span>';
   if(d.sig==='green') return '<span class="action-badge ab-buy">可追進｜停損開盤價</span>';
   if(d.sig==='red'){
     if(d.trap==='red') return '<span class="action-badge ab-sell">有單出清｜策略離場</span>';
-    return '<span class="action-badge ab-sell">第一聲警報｜等9:30確認</span>';
+    // 空頭排列+倒貨更危險
+    if(d.maStatus==='bear'||d.maStatus==='dc')
+      return '<span class="action-badge ab-sell">⚠️趨勢向下+倒貨</span>';
+    return '<span class="action-badge ab-sell">第一聲警報｜等9:30</span>';
   }
   if(d.sig==='warn') return '<span class="action-badge ab-wait">觀望｜等量能</span>';
   if(d.trap==='green') return '<span class="action-badge ab-buy">洗盤完｜可跟多</span>';
   if(d.trap==='red') return '<span class="action-badge ab-exit">假突破｜策略出場</span>';
   return '<span style="color:var(--muted);font-size:10px">—</span>';
+}
+
+function onDateChange(){
+  const d=getQueryDate();
+  const badge=document.getElementById('modeBadge');
+  const hint=document.getElementById('dateHint');
+  if(isToday(d)){
+    badge.className='mode-badge mode-live'; badge.textContent='今日即時';
+    hint.textContent='抓取盤中第一根5分K';
+  } else {
+    badge.className='mode-badge mode-hist'; badge.textContent='歷史回顧';
+    hint.textContent='抓取該日歷史資料（近30天內）';
+  }
+  loadState(d); renderTable(); updateStats();
 }
 
 function setFilter(f){
@@ -438,7 +508,8 @@ function renderTable(){
   if(q) list=list.filter(([r,c,n])=>c.includes(q)||n.toLowerCase().includes(q));
   if(currentFilter==='green') list=list.filter(([r,c])=>stockData[c]?.sig==='green');
   if(currentFilter==='red')   list=list.filter(([r,c])=>stockData[c]?.sig==='red');
-  if(currentFilter==='warn')  list=list.filter(([r,c])=>stockData[c]?.sig==='warn');
+  if(currentFilter==='gc')    list=list.filter(([r,c])=>stockData[c]?.maStatus==='gc');
+  if(currentFilter==='bull')  list=list.filter(([r,c])=>['bull','gc'].includes(stockData[c]?.maStatus));
   if(currentFilter==='watch') list=list.filter(([r,c])=>stockData[c]?.watch);
   document.getElementById('countLabel').textContent=list.length+' / 500';
   document.getElementById('tbody').innerHTML=list.map(([rank,code,name,weight])=>{
@@ -448,7 +519,9 @@ function renderTable(){
     const sHtml=d.sig==='green'?'<span class="badge badge-green">有呼吸</span>':d.sig==='red'?'<span class="badge badge-red">倒貨警報</span>':d.sig==='warn'?'<span class="badge badge-warn">量不足</span>':'<span style="color:var(--muted);font-size:10px">—</span>';
     return `<tr>
       <td class="rank">${rank}</td><td class="code">${code}</td><td class="name">${name}</td><td class="weight">${weight}%</td>
-      <td>${rHtml}</td><td>${kHtml}</td><td>${sHtml}</td><td>${getActionHTML(d)}</td>
+      <td>${rHtml}</td><td>${kHtml}</td><td>${sHtml}</td>
+      <td>${getMaHTML(d)}</td>
+      <td>${getActionHTML(d)}</td>
       <td><div class="trap-group">
         <button class="tbtn ${d.trap==='red'?'ar':''}" onclick="toggleTrap('${code}','red')">假突破</button>
         <button class="tbtn ${d.trap==='green'?'ag':''}" onclick="toggleTrap('${code}','green')">洗盤完</button>
@@ -463,49 +536,23 @@ function updateStats(){
   const codes=STOCKS.map(s=>s[1]);
   document.getElementById('sRed').textContent=codes.filter(c=>stockData[c]?.sig==='red').length;
   document.getElementById('sGreen').textContent=codes.filter(c=>stockData[c]?.sig==='green').length;
-  document.getElementById('sWarn').textContent=codes.filter(c=>stockData[c]?.sig==='warn').length;
+  document.getElementById('sGC').textContent=codes.filter(c=>stockData[c]?.maStatus==='gc').length;
   document.getElementById('sWatch').textContent=codes.filter(c=>stockData[c]?.watch).length;
-  document.getElementById('sFetched').textContent=codes.filter(c=>stockData[c]?.ratio!=null).length;
+  document.getElementById('sFetched').textContent=codes.filter(c=>stockData[c]?.ratio!=null||stockData[c]?.maStatus!=null).length;
 }
 
 function toggleTrap(code,val){ensureStock(code);stockData[code].trap=stockData[code].trap===val?null:val;saveState();renderTable();updateStats();}
 function setNote(code,val){ensureStock(code);stockData[code].note=val;saveState();}
 function toggleWatch(code){ensureStock(code);stockData[code].watch=!stockData[code].watch;saveState();renderTable();updateStats();}
 function showTab(name,el){document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));document.getElementById('tab-'+name).classList.add('active');el.classList.add('active');}
-
-function saveApiKey(){
-  const k=document.getElementById('apiKeyInput').value.trim();
-  if(!k){showToast('請輸入 API Key');return;}
-  apiKey=k;localStorage.setItem('fugle_api_key',k);
-  document.getElementById('setupScreen').style.display='none';
-  document.getElementById('mainApp').style.display='block';
-  initApp();
-}
+function saveApiKey(){const k=document.getElementById('apiKeyInput').value.trim();if(!k){showToast('請輸入 API Key');return;}apiKey=k;localStorage.setItem('fugle_api_key',k);document.getElementById('setupScreen').style.display='none';document.getElementById('mainApp').style.display='block';initApp();}
 function showSettings(){const k=prompt('更換 API Key（留空取消）：');if(k&&k.trim()){apiKey=k.trim();localStorage.setItem('fugle_api_key',apiKey);showToast('✅ API Key 已更新');}}
-
-function updateClock(){
-  const n=new Date();
-  document.getElementById('clock').textContent=String(n.getHours()).padStart(2,'0')+':'+String(n.getMinutes()).padStart(2,'0');
-  const days=['日','一','二','三','四','五','六'];
-  document.getElementById('dateStr').textContent=`${n.getFullYear()}/${String(n.getMonth()+1).padStart(2,'0')}/${String(n.getDate()).padStart(2,'0')} 週${days[n.getDay()]}`;
-}
+function updateClock(){const n=new Date();document.getElementById('clock').textContent=String(n.getHours()).padStart(2,'0')+':'+String(n.getMinutes()).padStart(2,'0');const days=['日','一','二','三','四','五','六'];document.getElementById('dateStr').textContent=`${n.getFullYear()}/${String(n.getMonth()+1).padStart(2,'0')}/${String(n.getDate()).padStart(2,'0')} 週${days[n.getDay()]}`;}
 setInterval(updateClock,10000);
-
 let toastT;
 function showToast(msg){const t=document.getElementById('toast');t.textContent=msg;t.classList.add('show');clearTimeout(toastT);toastT=setTimeout(()=>t.classList.remove('show'),2800);}
-
-function initApp(){
-  const today=todayStr();
-  document.getElementById('queryDate').value=today;
-  onDateChange();
-  updateClock();
-}
-
-(function(){
-  const saved=localStorage.getItem('fugle_api_key');
-  if(saved){apiKey=saved;document.getElementById('setupScreen').style.display='none';document.getElementById('mainApp').style.display='block';initApp();}
-  else updateClock();
-})();
+function initApp(){const today=todayStr();document.getElementById('queryDate').value=today;onDateChange();updateClock();}
+(function(){const saved=localStorage.getItem('fugle_api_key');if(saved){apiKey=saved;document.getElementById('setupScreen').style.display='none';document.getElementById('mainApp').style.display='block';initApp();}else updateClock();})();
 </script>
 </body>
 </html>
