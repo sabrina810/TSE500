@@ -595,13 +595,34 @@ function toggleWatch(code){ensureStock(code);stockData[code].watch=!stockData[co
 function toggleDebug(){const p=document.getElementById("debugPanel");p.style.display=p.style.display==="none"?"block":"none";}
 function showTab(name,el){document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));document.getElementById('tab-'+name).classList.add('active');el.classList.add('active');}
 function saveApiKey(){const k=document.getElementById('apiKeyInput').value.trim();if(!k){showToast('請輸入 API Key');return;}apiKey=k;localStorage.setItem('fugle_api_key',k);document.getElementById('setupScreen').style.display='none';document.getElementById('mainApp').style.display='block';initApp();}
-function showSettings(){const k=prompt('更換 API Key（留空取消）：');if(k&&k.trim()){apiKey=k.trim();localStorage.setItem('fugle_api_key',apiKey);showToast('✅ API Key 已更新');}}
+function showSettings(){
+  const current=localStorage.getItem('fugle_api_key')||'';
+  const k=prompt('目前 API Key（可重新輸入更換）：\n\n'+current.slice(0,20)+'...');
+  if(k&&k.trim()){
+    apiKey=k.trim();
+    localStorage.setItem('fugle_api_key',apiKey);
+    showToast('✅ API Key 已更新：'+apiKey.slice(0,10)+'...');
+  }
+}
+
 function updateClock(){const n=new Date();document.getElementById('clock').textContent=String(n.getHours()).padStart(2,'0')+':'+String(n.getMinutes()).padStart(2,'0');const days=['日','一','二','三','四','五','六'];document.getElementById('dateStr').textContent=`${n.getFullYear()}/${String(n.getMonth()+1).padStart(2,'0')}/${String(n.getDate()).padStart(2,'0')} 週${days[n.getDay()]}`;}
 setInterval(updateClock,10000);
 let toastT;
 function showToast(msg){const t=document.getElementById('toast');t.textContent=msg;t.classList.add('show');clearTimeout(toastT);toastT=setTimeout(()=>t.classList.remove('show'),2800);}
 function initApp(){const today=todayStr();document.getElementById('queryDate').value=today;onDateChange();updateClock();}
-(function(){const saved=localStorage.getItem('fugle_api_key');if(saved){apiKey=saved;document.getElementById('setupScreen').style.display='none';document.getElementById('mainApp').style.display='block';initApp();}else updateClock();})();
+(function(){
+  const saved=localStorage.getItem('fugle_api_key');
+  if(saved){
+    apiKey=saved;
+    document.getElementById('setupScreen').style.display='none';
+    document.getElementById('mainApp').style.display='block';
+    initApp();
+    // 確認 Key 有讀到
+    setTimeout(()=>showToast('🔑 API Key 已載入：'+apiKey.slice(0,10)+'...'),500);
+  } else {
+    updateClock();
+  }
+})();
 </script>
 </body>
 </html>
